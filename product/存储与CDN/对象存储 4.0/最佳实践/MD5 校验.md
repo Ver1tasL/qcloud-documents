@@ -4,13 +4,13 @@
 
 COS 里每个对象对应一个 ETag，ETag 是对象被创建时对象内容的信息标识，但 ETag 不一定等同于对象内容的 MD5 校验值，因此不能通过 ETag 来校验下载对象与原对象是否一致，但用户可使用自定义对象元数据（x-cos-meta-\*）来实现下载对象与原对象的一致性校验。
 
+
 ## 数据校验方式
 
 - 校验上传对象
 如果用户需要校验上传到 COS 的对象与本地对象是否一致，可以在上传时将 HTTP 请求的 [Content-MD5](https://cloud.tencent.com/document/product/436/7728) 字段设置为经过 Base64 编码的对象内容 MD5 校验值，此时 COS 服务器将校验用户上传的对象，只有当 COS 服务器接收到的对象 MD5 校验值与用户设置的 Content-MD5 一致时，对象才可上传成功。
 - 校验下载对象
 如果用户需要校验下载对象与原对象是否一致，可在对象上传时使用校验算法计算对象的校验值，通过自定义元数据设置对象的校验值，在下载对象后，用户重新计算对象的校验值，并与该自定义元数据进行比较验证。在这种方式下，用户可自主选择校验算法，但对于同一个对象而言，其上传和下载时所使用的校验算法应保持一致。   
-
 
 
 ## API 接口示例
@@ -45,6 +45,7 @@ Date: Fri, 21 Jun 2019 09:45:12 GMT
 Authorization: q-sign-algorithm=sha1&q-ak=AKID8A0fBVtYFrNm02oY1g1JQQF0c3JO****&q-sign-time=1561109068;1561116268&q-key-time=1561109068;1561116268&q-header-list=content-length;content-md5;content-type;date;host&q-url-param-list=&q-signature=998bfc8836fc205d09e455c14e3d7e623bd2****
 x-cos-meta-md5: b62e10bcab55a88240bd9c436cffdcf9
 ```
+>! 对于分块上传的文件，COS 只会校验每个分块的 MD5 值，而不会计算合并后完整文件的 MD5 值。
 
 #### 对象下载响应
 
